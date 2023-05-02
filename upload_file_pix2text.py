@@ -67,7 +67,7 @@ def predict(
         print(analysis_res)
         print(fp)
         out = p2t.recognize(fp,use_analyzer=use_analyzer,resized_shape=resized_shape,save_analysis_res=analysis_res)
-        res = '\n'.join([o['text'] for o in out if o['type']=='isolated'])
+        res = res.join('\n'.join([o['text'] for o in out if o['type']=='isolated']))
 
     create_latex_file(root_folder,uuid_folder,res)
 
