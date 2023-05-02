@@ -38,10 +38,10 @@ def predict(
     img_file_or_dir,
     save_analysis_res,
     use_analyzer=True,
-    analyzer_name='mdf',
+    analyzer_name='mfd',
     analyzer_type='yolov7_tiny',
     device='cpu',
-    resized_shape='600'):
+    resized_shape=600):
 
     p2t = Pix2Text(
         analyzer_config=dict(model_name=analyzer_name, model_type=analyzer_type),
@@ -64,13 +64,11 @@ def predict(
     res = ""
     for idx, fp in enumerate(fp_list):
         analysis_res = save_analysis_res[idx] if save_analysis_res is not None else None
-        out = p2t.recognize(
-            fp,
-            use_analyzer=use_analyzer,
-            resized_shape=resized_shape,
-            save_analysis_res=analysis_res,
-        )
+        print(analysis_res)
+        print(fp)
+        out = p2t.recognize(fp,use_analyzer=use_analyzer,resized_shape=resized_shape,save_analysis_res=analysis_res)
         res = '\n'.join([o['text'] for o in out if o['type']=='isolated'])
+
     create_latex_file(root_folder,uuid_folder,res)
 
 uuid_folder = create_folders(root_folder=root_folder,path_list=path_list)
@@ -108,7 +106,7 @@ if file is not None:
 
         st.success("Imagens Anotadas!")
 
-        images_to_plot = glob.glob(os.path.join(annot_images,file_name,'*.png'))
+        images_to_plot = glob.glob(os.path.join(annot_images,'*.png'))
         # plot images in 3 columns
         grid_size = 3
         image_groups = []
@@ -142,7 +140,8 @@ if file is not None:
         with st.spinner('Aguarde o retorno do GPT...'):
             with open(os.path.join(root_folder,uuid_folder, 'latex.txt')) as file:
                 for line in file:
-                    if line != "":
+                    if line != "" and '$$' not in line:
+                        print(line)
                         start_phrase = f'Identify and Describe the equation: {line}'
                         ###
                         response = openai.Completion.create(engine=deployment_name, prompt=start_phrase, max_tokens=500)
