@@ -34,3 +34,16 @@ def resize_image(image,width):
   hsize = int((float(image.size[1]) * float(width_percent)))
   image = image.resize((base_width, hsize), Image.ANTIALIAS)
   return image
+
+def crop_pix2text(file,bounds,save_dir,number):
+    prefix_image_name = file.split(".png")[0]
+    i = 1
+    x1 = bounds[0]
+    y1 = bounds[1]
+    x2 = bounds[2]
+    y2 = bounds[3]
+    img = Image.open(file)
+    cropped = img.crop(box=(x1-30,y1-30,x2+30,y2+30))
+    cropped = resize_image(cropped)
+    cropped.save(os.path.join(save_dir,prefix_image_name+'_'+str(number)+'.png'),optimize=True)
+    i = i+1
